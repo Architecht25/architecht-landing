@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
+  <script>document.documentElement.classList.add('js');</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Architecht — Logiciels pour la rénovation et la construction</title>
@@ -122,10 +123,28 @@
     .card {
       background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
       padding: 28px; display: flex; flex-direction: column; position: relative; overflow: hidden;
-      transition: transform .3s ease, box-shadow .3s ease;
+      transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease, opacity .8s ease;
+      transition-delay: var(--delay, 0s);
     }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -22px rgba(2,6,23,.35); }
-    .card::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 4px; background: var(--c, var(--brand)); }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--c, var(--brand));
+      box-shadow: 0 24px 50px -24px color-mix(in srgb, var(--c, var(--brand)) 60%, transparent);
+    }
+    .card::before {
+      content: ""; position: absolute; left: 0; top: 0; right: 0; height: 4px;
+      background: var(--c, var(--brand)); transform-origin: left; transition: transform .5s ease;
+    }
+    .card:hover::before { transform: scaleX(1.0); }
+    .card::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+      background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--c, var(--brand)) 14%, transparent), transparent 60%);
+      transition: opacity .3s ease;
+    }
+    .card:hover::after { opacity: 1; }
+    /* Apparition au scroll : activée seulement si JavaScript tourne */
+    .js .card-anim { opacity: 0; transform: translateY(32px); }
+    .js .card-anim.in { opacity: 1; transform: none; }
     .card .tag { font-size: 0.8rem; font-weight: 700; color: var(--c, var(--brand)); text-transform: uppercase; letter-spacing: 0.08em; }
     .card p { color: var(--muted); margin: 0 0 14px; }
     .card ul { padding-left: 18px; margin: 0 0 22px; color: var(--muted); }
@@ -264,7 +283,7 @@
       <p class="lead">Chaque outil répond à un public précis. Ils fonctionnent séparément ou ensemble.</p>
 
       <div class="grid">
-        <article class="card" style="--c: var(--ren0vate)">
+        <article class="card card-anim" style="--c: var(--ren0vate); --delay: 0s">
           <span class="tag">Propriétaires · Architectes · Entrepreneurs</span>
           <h3>Ren0vate</h3>
           <p>La plateforme SaaS qui simplifie les primes à la rénovation énergétique en Belgique et suit vos projets de travaux de la première simulation à la réception.</p>
@@ -278,7 +297,7 @@
           <a class="btn" href="#contact">Essayer Ren0vate</a>
         </article>
 
-        <article class="card" style="--c: var(--cairn)">
+        <article class="card card-anim" style="--c: var(--cairn); --delay: .15s">
           <span class="tag">Architectes · Architectes d'intérieur</span>
           <h3>Cairn</h3>
           <p>Le cockpit qui accompagne un architecte de la première esquisse du programme jusqu'à la réception du chantier, en une seule application.</p>
@@ -292,7 +311,7 @@
           <a class="btn" href="#contact">Découvrir Cairn</a>
         </article>
 
-        <article class="card" style="--c: var(--urbania)">
+        <article class="card card-anim" style="--c: var(--urbania); --delay: .3s">
           <span class="tag">Propriétaires · Architectes</span>
           <h3>urbanIA</h3>
           <p>L'assistant IA qui aide à comprendre le cadre urbanistique d'un bien avant de se lancer dans un projet de transformation.</p>
@@ -452,6 +471,26 @@
 <script>
   (function () {
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Cartes produits : apparition au scroll et lueur qui suit la souris
+    var cards = document.querySelectorAll('.card-anim');
+    if (reduced || !('IntersectionObserver' in window)) {
+      cards.forEach(function (c) { c.classList.add('in'); });
+    } else {
+      var cardIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); cardIo.unobserve(e.target); }
+        });
+      }, { threshold: 0.2 });
+      cards.forEach(function (c) { cardIo.observe(c); });
+    }
+    cards.forEach(function (c) {
+      c.addEventListener('pointermove', function (e) {
+        var r = c.getBoundingClientRect();
+        c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
 
     // Récit épinglé : l'étape active suit la progression du scroll
     var story = document.getElementById('parcours');
