@@ -1,24 +1,26 @@
 <!doctype html>
 <html lang="fr">
 <head>
+  <script>document.documentElement.classList.add('js');</script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Architecht — Logiciels pour la rénovation et la construction</title>
-  <meta name="description" content="Architecht conçoit des produits digitaux pour la rénovation : Ren0vate pour les propriétaires, carin pour les architectes, urbanIA pour l'urbanisme, et bientôt un outil de métré vers liste de courses.">
+  <meta name="description" content="Architecht conçoit des produits digitaux pour la rénovation : Ren0vate pour les propriétaires, Cairn pour les architectes, urbanIA pour l'urbanisme, et bientôt un outil de métré vers liste de courses.">
   <style>
     :root {
       --bg: #ffffff;
       --bg-soft: #f6f7f4;
+      --ink: #0b1220;
       --text: #1e293b;
       --muted: #5b6474;
       --line: #e2e8f0;
       --brand: #0f766e;
       --brand-strong: #115e59;
-      --accent: #d97706;
-      --ren0vate: #15803d;
-      --carin: #1d4ed8;
-      --urbania: #7c3aed;
       --soon: #b45309;
+      --ren0vate: #15803d;
+      --cairn: #1d4ed8;
+      --urbania: #7c3aed;
+      --blueprint: #5eead4;
       --radius: 14px;
     }
     @media (prefers-color-scheme: dark) {
@@ -52,39 +54,97 @@
     }
     a { color: inherit; }
     .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.78rem; font-weight: 700; color: var(--brand); }
+    h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); line-height: 1.05; letter-spacing: -0.035em; margin: 14px 0 20px; }
+    h2 { font-size: clamp(1.7rem, 3.5vw, 2.5rem); letter-spacing: -0.02em; margin: 8px 0 14px; line-height: 1.15; }
+    h3 { font-size: 1.25rem; margin: 0 0 8px; }
+    .lead { font-size: 1.15rem; color: var(--muted); max-width: 680px; }
+    .btn {
+      display: inline-block; padding: 12px 22px; border-radius: 10px;
+      background: var(--brand); color: #fff; text-decoration: none; font-weight: 600;
+      border: 0; cursor: pointer; font: inherit;
+    }
+    .btn:hover { background: var(--brand-strong); }
+    .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+    .btn.ghost:hover { border-color: var(--brand); }
+    .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+    section { padding: 88px 0; }
+    /* Les ancres ne passent pas sous l'en-tête fixe */
+    [id] { scroll-margin-top: 64px; }
+    section.soft { background: var(--bg-soft); }
+
+    /* ---------- Header ---------- */
     header.top {
-      position: sticky; top: 0; z-index: 10;
-      background: color-mix(in srgb, var(--bg) 88%, transparent);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--line);
+      position: fixed; inset: 0 0 auto 0; z-index: 20;
+      background: color-mix(in srgb, var(--bg) 80%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
     }
     .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
     .logo { font-weight: 800; font-size: 1.25rem; text-decoration: none; letter-spacing: -0.02em; }
     .logo span { color: var(--brand); }
     nav a { margin-left: 22px; text-decoration: none; color: var(--muted); font-size: 0.95rem; }
     nav a:hover { color: var(--text); }
-    .btn {
-      display: inline-block; padding: 12px 22px; border-radius: 10px;
-      background: var(--brand); color: #fff; text-decoration: none; font-weight: 600;
+
+    /* ---------- Hero « plan qui se dessine » ---------- */
+    .hero {
+      position: relative; min-height: 100vh; display: flex; align-items: center;
+      background: var(--ink); color: #e2e8f0; overflow: hidden; padding: 120px 0 80px;
     }
-    .btn:hover { background: var(--brand-strong); }
-    .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
-    .btn.ghost:hover { border-color: var(--brand); }
-    section { padding: 88px 0; }
-    section.soft { background: var(--bg-soft); }
-    .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.78rem; font-weight: 700; color: var(--brand); }
-    h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.1; letter-spacing: -0.03em; margin: 12px 0 18px; }
-    h2 { font-size: clamp(1.7rem, 3.5vw, 2.4rem); letter-spacing: -0.02em; margin: 8px 0 14px; }
-    h3 { font-size: 1.25rem; margin: 0 0 8px; }
-    .lead { font-size: 1.15rem; color: var(--muted); max-width: 680px; }
-    .hero { padding: 96px 0 80px; }
-    .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+    .hero .eyebrow { color: var(--blueprint); }
+    .hero .lead { color: #94a3b8; }
+    .hero .btn.ghost { color: #e2e8f0; border-color: #334155; }
+    .blueprint {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; opacity: 0.55;
+    }
+    .blueprint .draw {
+      fill: none; stroke: var(--blueprint); stroke-width: 1.4; stroke-linecap: round;
+      stroke-dasharray: var(--len, 1200); stroke-dashoffset: var(--len, 1200);
+      animation: draw 2.4s cubic-bezier(.65,0,.35,1) forwards;
+      animation-delay: calc(var(--d, 0) * 1s);
+    }
+    .blueprint .dim {
+      fill: #94a3b8; font: 12px ui-monospace, Menlo, Consolas, monospace;
+      opacity: 0; animation: fade .6s ease forwards;
+      animation-delay: calc(var(--d, 0) * 1s);
+    }
+    .hero-content { position: relative; max-width: 820px; }
+    .reveal { opacity: 0; transform: translateY(16px); animation: rise .9s cubic-bezier(.2,.7,.2,1) forwards; }
+    .reveal.d1 { animation-delay: 1.6s; }
+    .reveal.d2 { animation-delay: 1.8s; }
+    .reveal.d3 { animation-delay: 2s; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @keyframes fade { to { opacity: 1; } }
+    @keyframes rise { to { opacity: 1; transform: none; } }
+
+    /* ---------- Cartes produits ---------- */
     .grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); margin-top: 44px; }
     .card {
       background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
       padding: 28px; display: flex; flex-direction: column; position: relative; overflow: hidden;
+      transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease, opacity .8s ease;
+      transition-delay: var(--delay, 0s);
     }
-    .card::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 4px; background: var(--c, var(--brand)); }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--c, var(--brand));
+      box-shadow: 0 24px 50px -24px color-mix(in srgb, var(--c, var(--brand)) 60%, transparent);
+    }
+    .card::before {
+      content: ""; position: absolute; left: 0; top: 0; right: 0; height: 4px;
+      background: var(--c, var(--brand)); transform-origin: left; transition: transform .5s ease;
+    }
+    .card:hover::before { transform: scaleX(1.0); }
+    .card::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+      background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--c, var(--brand)) 14%, transparent), transparent 60%);
+      transition: opacity .3s ease;
+    }
+    .card:hover::after { opacity: 1; }
+    /* Apparition au scroll : activée seulement si JavaScript tourne */
+    .js .card-anim { opacity: 0; transform: translateY(32px); }
+    .js .card-anim.in { opacity: 1; transform: none; }
     .card .tag { font-size: 0.8rem; font-weight: 700; color: var(--c, var(--brand)); text-transform: uppercase; letter-spacing: 0.08em; }
     .card p { color: var(--muted); margin: 0 0 14px; }
     .card ul { padding-left: 18px; margin: 0 0 22px; color: var(--muted); }
@@ -93,22 +153,81 @@
     .card .btn:hover { filter: brightness(0.9); background: var(--c, var(--brand)); }
     .card.soon { border-style: dashed; }
     .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: color-mix(in srgb, var(--soon) 15%, transparent); color: var(--soon); margin-left: 8px; vertical-align: middle; }
-    .steps { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 40px; counter-reset: s; }
-    .step { border-left: 3px solid var(--brand); padding: 4px 0 4px 16px; }
-    .step strong { display: block; margin-bottom: 4px; }
-    .step p { margin: 0; color: var(--muted); font-size: 0.95rem; }
-    .flow { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.95rem; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-top: 36px; overflow-x: auto; white-space: pre; color: var(--muted); }
+
+    /* ---------- Récit épinglé : d'un projet à la réception ---------- */
+    .story { position: relative; height: 500vh; background: var(--ink); color: #e2e8f0; }
+    .story-sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; overflow: hidden; }
+    .story .eyebrow { color: var(--blueprint); }
+    .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; width: 100%; }
+    .steps-list { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 10px; }
+    .steps-list li {
+      display: flex; gap: 14px; align-items: center; color: #64748b;
+      transition: color .4s ease;
+    }
+    .steps-list li .n {
+      width: 28px; height: 28px; border-radius: 50%; border: 1px solid #334155;
+      display: grid; place-items: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+      transition: all .4s ease;
+    }
+    .steps-list li.active { color: #e2e8f0; }
+    .steps-list li.active .n { background: var(--blueprint); border-color: var(--blueprint); color: var(--ink); }
+    .steps-list li.done { color: #94a3b8; }
+    .story-panel { position: relative; min-height: 340px; }
+    .panel {
+      position: absolute; inset: 0; opacity: 0; transform: translateY(20px);
+      transition: opacity .6s ease, transform .6s ease;
+      background: #0b1a2e; border: 1px solid #1e293b; border-radius: var(--radius);
+      padding: 36px; display: flex; flex-direction: column; justify-content: center;
+    }
+    .panel.active { opacity: 1; transform: none; }
+    .panel .product { display: inline-block; align-self: flex-start; font-weight: 700; font-size: 0.85rem; padding: 4px 12px; border-radius: 999px; margin-bottom: 14px; color: #0b1220; }
+    .panel p { color: #94a3b8; margin: 0; }
+    .progress { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: #1e293b; }
+    .progress i { display: block; height: 100%; width: 0; background: var(--blueprint); }
+
+    /* ---------- Démo métré → liste de courses ---------- */
+    .demo { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: stretch; margin-top: 40px; }
+    .demo-col { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+    .demo-col h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 14px; }
+    .demo-col ul { list-style: none; margin: 0; padding: 0; }
+    .demo-col li {
+      display: flex; justify-content: space-between; gap: 12px; padding: 9px 0;
+      border-bottom: 1px dashed var(--line); font-size: 0.95rem;
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .demo-col li:last-child { border-bottom: 0; }
+    .demo-col li .q { font-weight: 700; color: var(--brand); white-space: nowrap; }
+    .arrow { align-self: center; font-size: 1.8rem; color: var(--brand); }
+    .demo-col.out li.pending { opacity: 0; transform: translateX(-10px); }
+    .replay { margin-top: 18px; }
+
+    /* ---------- Blocs divers ---------- */
     .split { display: grid; gap: 40px; grid-template-columns: 1fr 1fr; align-items: center; }
     .about p { color: var(--muted); }
     .contact { text-align: center; }
     .contact p { color: var(--muted); max-width: 620px; margin: 0 auto; }
     footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted); font-size: 0.9rem; }
     footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-    @media (max-width: 760px) {
+
+    /* ---------- Responsive : le récit épinglé devient une liste simple ---------- */
+    @media (max-width: 860px) {
       nav a { display: none; }
-      .split { grid-template-columns: 1fr; }
+      .split, .story-grid, .demo { grid-template-columns: 1fr; }
+      .demo .arrow { transform: rotate(90deg); justify-self: center; }
       section { padding: 64px 0; }
-      .hero { padding: 64px 0 56px; }
+      .story { height: auto; }
+      .story-sticky { position: static; height: auto; padding: 64px 0; }
+      .story-panel { min-height: 0; display: grid; gap: 16px; margin-top: 32px; }
+      .panel { position: static; opacity: 1; transform: none; }
+      .progress, .steps-list { display: none; }
+    }
+
+    /* ---------- Accessibilité : réduire les animations ---------- */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .blueprint .draw { stroke-dashoffset: 0; }
+      .blueprint .dim, .reveal { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
     }
   </style>
 </head>
@@ -119,6 +238,7 @@
     <a class="logo" href="#top">Architech<span>t</span></a>
     <nav>
       <a href="#produits">Produits</a>
+      <a href="#parcours">Parcours</a>
       <a href="#bientot">Bientôt</a>
       <a href="#societe">Société</a>
       <a href="#contact">Contact</a>
@@ -128,18 +248,34 @@
 
 <main id="top">
 
+  <!-- Hero : plan architectural qui se dessine -->
   <section class="hero">
-    <div class="wrap">
-      <p class="eyebrow">Architecht</p>
-      <h1>Des outils digitaux pour bâtir et rénover mieux.</h1>
-      <p class="lead">Architecht développe des logiciels pour ceux qui transforment les bâtiments : propriétaires qui rénovent, architectes qui conçoivent, entrepreneurs qui chiffrent et commandent.</p>
-      <div class="cta">
+    <svg class="blueprint" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <!-- Enveloppe du bâtiment -->
+      <path class="draw" style="--len:2400;--d:0" d="M120 640 L120 180 L520 180 L520 120 L1000 120 L1000 640 Z"/>
+      <!-- Cloisons intérieures -->
+      <path class="draw" style="--len:900;--d:.4" d="M520 180 L520 640 M330 180 L330 430 M330 430 L120 430 M700 120 L700 640 M700 380 L1000 380"/>
+      <!-- Cotes -->
+      <path class="draw" style="--len:800;--d:1.1" d="M120 690 L1000 690 M120 680 L120 700 M1000 680 L1000 700 M520 720 L700 720"/>
+      <!-- Axes -->
+      <path style="fill:none;stroke:var(--blueprint);stroke-opacity:.5;stroke-dasharray:18 10" d="M60 400 L1140 400"/>
+      <text class="dim" x="130" y="710" style="--d:1.8">12 550 mm</text>
+      <text class="dim" x="560" y="744" style="--d:2">4 200 mm</text>
+      <text class="dim" x="1010" y="400" style="--d:2.1">A</text>
+    </svg>
+
+    <div class="wrap hero-content">
+      <p class="eyebrow reveal">Architecht</p>
+      <h1 class="reveal d1">Des outils digitaux pour bâtir et rénover mieux.</h1>
+      <p class="lead reveal d2">Architecht développe des logiciels pour ceux qui transforment les bâtiments : propriétaires qui rénovent, architectes qui conçoivent, entrepreneurs qui chiffrent et commandent.</p>
+      <div class="cta reveal d3">
         <a class="btn" href="#produits">Découvrir nos produits</a>
         <a class="btn ghost" href="#contact">Nous contacter</a>
       </div>
     </div>
   </section>
 
+  <!-- Produits -->
   <section id="produits" class="soft">
     <div class="wrap">
       <p class="eyebrow">Nos produits</p>
@@ -147,8 +283,7 @@
       <p class="lead">Chaque outil répond à un public précis. Ils fonctionnent séparément ou ensemble.</p>
 
       <div class="grid">
-
-        <article class="card" style="--c: var(--ren0vate)">
+        <article class="card card-anim" style="--c: var(--ren0vate); --delay: 0s">
           <span class="tag">Propriétaires · Architectes · Entrepreneurs</span>
           <h3>Ren0vate</h3>
           <p>La plateforme SaaS qui simplifie les primes à la rénovation énergétique en Belgique et suit vos projets de travaux de la première simulation à la réception.</p>
@@ -162,7 +297,7 @@
           <a class="btn" href="#contact">Essayer Ren0vate</a>
         </article>
 
-        <article class="card" style="--c: var(--carin)">
+        <article class="card card-anim" style="--c: var(--cairn); --delay: .15s">
           <span class="tag">Architectes · Architectes d'intérieur</span>
           <h3>Cairn</h3>
           <p>Le cockpit qui accompagne un architecte de la première esquisse du programme jusqu'à la réception du chantier, en une seule application.</p>
@@ -176,7 +311,7 @@
           <a class="btn" href="#contact">Découvrir Cairn</a>
         </article>
 
-        <article class="card" style="--c: var(--urbania)">
+        <article class="card card-anim" style="--c: var(--urbania); --delay: .3s">
           <span class="tag">Propriétaires · Architectes</span>
           <h3>urbanIA</h3>
           <p>L'assistant IA qui aide à comprendre le cadre urbanistique d'un bien avant de se lancer dans un projet de transformation.</p>
@@ -187,43 +322,111 @@
           </ul>
           <a class="btn" href="#contact">Découvrir urbanIA</a>
         </article>
-
       </div>
     </div>
   </section>
 
-  <section id="bientot">
-    <div class="wrap split">
-      <div>
-        <p class="eyebrow">Bientôt</p>
-        <h2>Du métré à la liste de courses <span class="badge">En développement</span></h2>
-        <p class="lead">Une application en ligne pour les entrepreneurs : vous importez le métré d'un chantier et obtenez automatiquement la liste de matériaux à commander, prête à être envoyée à vos fournisseurs.</p>
-        <div class="cta">
-          <a class="btn ghost" href="#contact">Être prévenu du lancement</a>
+  <!-- Récit épinglé : d'un projet à la réception -->
+  <section id="parcours" class="story">
+    <div class="story-sticky">
+      <div class="wrap story-grid">
+        <div>
+          <p class="eyebrow">Le parcours</p>
+          <h2>D'un projet à la réception, un seul fil.</h2>
+          <p class="lead" style="color:#94a3b8">Chaque étape du chantier est accompagnée par l'outil qui convient.</p>
+          <ol class="steps-list" id="steps">
+            <li data-step="0"><span class="n">1</span> Programme</li>
+            <li data-step="1"><span class="n">2</span> Budget et métré</li>
+            <li data-step="2"><span class="n">3</span> Consultation et contrats</li>
+            <li data-step="3"><span class="n">4</span> Chantier</li>
+            <li data-step="4"><span class="n">5</span> Réception</li>
+          </ol>
+        </div>
+
+        <div class="story-panel">
+          <div class="panel" data-step="0">
+            <span class="product" style="background:var(--cairn);color:#fff">Cairn</span>
+            <h3>Définir le programme</h3>
+            <p>Pièces, surfaces et exigences techniques sont posées dès le départ, avec une juridiction adaptée au projet.</p>
+          </div>
+          <div class="panel" data-step="1">
+            <span class="product" style="background:var(--cairn);color:#fff">Cairn</span>
+            <h3>Chiffrer avec le métré</h3>
+            <p>Budget et métré sont liés : chaque modification de plan met à jour le chiffrage.</p>
+          </div>
+          <div class="panel" data-step="2">
+            <span class="product" style="background:var(--cairn);color:#fff">Cairn</span>
+            <h3>Consulter et contractualiser</h3>
+            <p>Comparez les offres des entreprises et gérez les contrats au même endroit.</p>
+          </div>
+          <div class="panel" data-step="3">
+            <span class="product" style="background:var(--ren0vate);color:#fff">Ren0vate</span>
+            <h3>Suivre le chantier</h3>
+            <p>Avancement par phase, budget et documents suivis en temps réel, depuis le terrain.</p>
+          </div>
+          <div class="panel" data-step="4">
+            <span class="product" style="background:var(--urbania);color:#fff">urbanIA</span>
+            <h3>Réceptionner et vérifier</h3>
+            <p>Les démarches administratives et les contrôles réglementaires sont préparés et vérifiés avant la réception.</p>
+          </div>
+          <div class="progress"><i id="bar"></i></div>
         </div>
       </div>
-      <div class="flow">Métré (postes, quantités)
-        ↓
-Nomenclature &amp; calcul des besoins
-        ↓
-Liste de courses fournisseur
-        ↓
-Commande &amp; suivi</div>
     </div>
   </section>
 
-  <section id="pourquoi" class="soft">
+  <!-- Démo : métré → liste de courses -->
+  <section id="bientot">
     <div class="wrap">
-      <p class="eyebrow">Notre approche</p>
-      <h2>Pensé avec le terrain, construit pour durer.</h2>
-      <div class="steps">
-        <div class="step"><strong>Partir des métiers</strong><p>Nos produits naissent des besoins réels des propriétaires, architectes et entrepreneurs.</p></div>
-        <div class="step"><strong>Simplifier les démarches</strong><p>Moins de tableurs, moins de relances, plus de temps sur le chantier et le projet.</p></div>
-        <div class="step"><strong>Données maîtrisées</strong><p>Vos données restent les vôtres. Conformité RGPD prise au sérieux dès la conception.</p></div>
+      <p class="eyebrow">Bientôt <span class="badge">En développement</span></p>
+      <h2>Du métré à la liste de courses.</h2>
+      <p class="lead">Une application en ligne pour les entrepreneurs : le métré d'un chantier devient automatiquement la liste de matériaux à commander.</p>
+
+      <div class="demo" id="demo">
+        <div class="demo-col">
+          <h3>Métré</h3>
+          <ul>
+            <li><span>Cloisons placo BA13</span><span class="q">48 m²</span></li>
+            <li><span>Enduit de finition</span><span class="q">96 m²</span></li>
+            <li><span>Peinture mate, 2 couches</span><span class="q">110 m²</span></li>
+            <li><span>Tuyau cuivre Ø15</span><span class="q">32 ml</span></li>
+          </ul>
+        </div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="demo-col out">
+          <h3>Liste de courses</h3>
+          <ul id="shopping">
+            <li class="pending"><span>Plaques BA13 (120×260)</span><span class="q">12 pcs</span></li>
+            <li class="pending"><span>Vis placo 25 mm</span><span class="q">1 boîte</span></li>
+            <li class="pending"><span>Enduit de finition 25 kg</span><span class="q">4 sacs</span></li>
+            <li class="pending"><span>Peinture mate 10 L</span><span class="q">3 seaux</span></li>
+            <li class="pending"><span>Tube cuivre Ø15 (5 m)</span><span class="q">7 pcs</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="cta replay">
+        <button class="btn ghost" id="replay" type="button">Rejouer la démo</button>
+        <a class="btn" href="#contact">Être prévenu du lancement</a>
       </div>
     </div>
   </section>
 
+  <!-- Notre approche -->
+  <section class="soft">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Notre approche</p>
+        <h2>Pensé avec le terrain, construit pour durer.</h2>
+      </div>
+      <div class="about">
+        <p><strong>Partir des métiers.</strong> Nos produits naissent des besoins réels des propriétaires, architectes et entrepreneurs.</p>
+        <p><strong>Simplifier les démarches.</strong> Moins de tableurs, moins de relances, plus de temps sur le chantier et le projet.</p>
+        <p><strong>Données maîtrisées.</strong> Vos données restent les vôtres, avec une conformité RGPD prise au sérieux dès la conception.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Société -->
   <section id="societe">
     <div class="wrap about split">
       <div>
@@ -244,6 +447,7 @@ Commande &amp; suivi</div>
     </div>
   </section>
 
+  <!-- Contact -->
   <section id="contact" class="soft contact">
     <div class="wrap">
       <p class="eyebrow">Contact</p>
@@ -263,6 +467,79 @@ Commande &amp; suivi</div>
     <span>Ren0vate · Cairn · urbanIA</span>
   </div>
 </footer>
+
+<script>
+  (function () {
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Cartes produits : apparition au scroll et lueur qui suit la souris
+    var cards = document.querySelectorAll('.card-anim');
+    if (reduced || !('IntersectionObserver' in window)) {
+      cards.forEach(function (c) { c.classList.add('in'); });
+    } else {
+      var cardIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); cardIo.unobserve(e.target); }
+        });
+      }, { threshold: 0.2 });
+      cards.forEach(function (c) { cardIo.observe(c); });
+    }
+    cards.forEach(function (c) {
+      c.addEventListener('pointermove', function (e) {
+        var r = c.getBoundingClientRect();
+        c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+
+    // Récit épinglé : l'étape active suit la progression du scroll
+    var story = document.getElementById('parcours');
+    var panels = document.querySelectorAll('.panel');
+    var dots = document.querySelectorAll('#steps li');
+    var bar = document.getElementById('bar');
+
+    function updateStory() {
+      var rect = story.getBoundingClientRect();
+      var total = story.offsetHeight - window.innerHeight;
+      var p = Math.min(Math.max(-rect.top / total, 0), 1);
+      var idx = Math.min(Math.floor(p * panels.length), panels.length - 1);
+      panels.forEach(function (el, i) { el.classList.toggle('active', i === idx); });
+      dots.forEach(function (el, i) {
+        el.classList.toggle('active', i === idx);
+        el.classList.toggle('done', i < idx);
+      });
+      bar.style.width = (p * 100) + '%';
+    }
+    window.addEventListener('scroll', updateStory, { passive: true });
+    window.addEventListener('resize', updateStory);
+    updateStory();
+
+    // Démo métré : les lignes de courses apparaissent une à une
+    var items = document.querySelectorAll('#shopping li');
+    var timers = [];
+
+    function playDemo() {
+      timers.forEach(clearTimeout);
+      timers = [];
+      items.forEach(function (li) { li.classList.add('pending'); });
+      items.forEach(function (li, i) {
+        timers.push(setTimeout(function () { li.classList.remove('pending'); }, reduced ? 0 : 500 + i * 450));
+      });
+    }
+
+    var demo = document.getElementById('demo');
+    var played = false;
+    if ('IntersectionObserver' in window && !reduced) {
+      var io = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting && !played) { played = true; playDemo(); }
+      }, { threshold: 0.4 });
+      io.observe(demo);
+    } else {
+      items.forEach(function (li) { li.classList.remove('pending'); });
+    }
+    document.getElementById('replay').addEventListener('click', playDemo);
+  })();
+</script>
 
 </body>
 </html>
