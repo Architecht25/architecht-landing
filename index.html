@@ -68,6 +68,8 @@
     .btn.ghost:hover { border-color: var(--brand); }
     .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
     section { padding: 88px 0; }
+    /* Les ancres ne passent pas sous l'en-tête fixe */
+    [id] { scroll-margin-top: 64px; }
     section.soft { background: var(--bg-soft); }
 
     /* ---------- Header ---------- */
