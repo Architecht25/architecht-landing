@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Architecht — Logiciels pour la rénovation et la construction</title>
+  <meta name="description" content="Architecht conçoit des produits digitaux pour la rénovation : Ren0vate pour les propriétaires, carin pour les architectes, urbanIA pour l'urbanisme, et bientôt un outil de métré vers liste de courses.">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #f6f7f4;
+      --text: #1e293b;
+      --muted: #5b6474;
+      --line: #e2e8f0;
+      --brand: #0f766e;
+      --brand-strong: #115e59;
+      --accent: #d97706;
+      --ren0vate: #15803d;
+      --carin: #1d4ed8;
+      --urbania: #7c3aed;
+      --soon: #b45309;
+      --radius: 14px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0f172a;
+        --bg-soft: #111c33;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --line: #1e293b;
+        --brand: #2dd4bf;
+        --brand-strong: #5eead4;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #0f172a;
+      --bg-soft: #111c33;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --line: #1e293b;
+      --brand: #2dd4bf;
+      --brand-strong: #5eead4;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+    header.top {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+    }
+    .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { font-weight: 800; font-size: 1.25rem; text-decoration: none; letter-spacing: -0.02em; }
+    .logo span { color: var(--brand); }
+    nav a { margin-left: 22px; text-decoration: none; color: var(--muted); font-size: 0.95rem; }
+    nav a:hover { color: var(--text); }
+    .btn {
+      display: inline-block; padding: 12px 22px; border-radius: 10px;
+      background: var(--brand); color: #fff; text-decoration: none; font-weight: 600;
+    }
+    .btn:hover { background: var(--brand-strong); }
+    .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+    .btn.ghost:hover { border-color: var(--brand); }
+    section { padding: 88px 0; }
+    section.soft { background: var(--bg-soft); }
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.78rem; font-weight: 700; color: var(--brand); }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.1; letter-spacing: -0.03em; margin: 12px 0 18px; }
+    h2 { font-size: clamp(1.7rem, 3.5vw, 2.4rem); letter-spacing: -0.02em; margin: 8px 0 14px; }
+    h3 { font-size: 1.25rem; margin: 0 0 8px; }
+    .lead { font-size: 1.15rem; color: var(--muted); max-width: 680px; }
+    .hero { padding: 96px 0 80px; }
+    .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+    .grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); margin-top: 44px; }
+    .card {
+      background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 28px; display: flex; flex-direction: column; position: relative; overflow: hidden;
+    }
+    .card::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 4px; background: var(--c, var(--brand)); }
+    .card .tag { font-size: 0.8rem; font-weight: 700; color: var(--c, var(--brand)); text-transform: uppercase; letter-spacing: 0.08em; }
+    .card p { color: var(--muted); margin: 0 0 14px; }
+    .card ul { padding-left: 18px; margin: 0 0 22px; color: var(--muted); }
+    .card li { margin-bottom: 6px; }
+    .card .btn { margin-top: auto; align-self: flex-start; background: var(--c, var(--brand)); }
+    .card .btn:hover { filter: brightness(0.9); background: var(--c, var(--brand)); }
+    .card.soon { border-style: dashed; }
+    .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: color-mix(in srgb, var(--soon) 15%, transparent); color: var(--soon); margin-left: 8px; vertical-align: middle; }
+    .steps { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 40px; counter-reset: s; }
+    .step { border-left: 3px solid var(--brand); padding: 4px 0 4px 16px; }
+    .step strong { display: block; margin-bottom: 4px; }
+    .step p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .flow { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.95rem; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-top: 36px; overflow-x: auto; white-space: pre; color: var(--muted); }
+    .split { display: grid; gap: 40px; grid-template-columns: 1fr 1fr; align-items: center; }
+    .about p { color: var(--muted); }
+    .contact { text-align: center; }
+    .contact p { color: var(--muted); max-width: 620px; margin: 0 auto; }
+    footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted); font-size: 0.9rem; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    @media (max-width: 760px) {
+      nav a { display: none; }
+      .split { grid-template-columns: 1fr; }
+      section { padding: 64px 0; }
+      .hero { padding: 64px 0 56px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top">Architech<span>t</span></a>
+    <nav>
+      <a href="#produits">Produits</a>
+      <a href="#bientot">Bientôt</a>
+      <a href="#societe">Société</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Architecht</p>
+      <h1>Des outils digitaux pour bâtir et rénover mieux.</h1>
+      <p class="lead">Architecht développe des logiciels pour ceux qui transforment les bâtiments : propriétaires qui rénovent, architectes qui conçoivent, entrepreneurs qui chiffrent et commandent.</p>
+      <div class="cta">
+        <a class="btn" href="#produits">Découvrir nos produits</a>
+        <a class="btn ghost" href="#contact">Nous contacter</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="produits" class="soft">
+    <div class="wrap">
+      <p class="eyebrow">Nos produits</p>
+      <h2>Un produit par besoin, une même exigence.</h2>
+      <p class="lead">Chaque outil répond à un public précis. Ils fonctionnent séparément ou ensemble.</p>
+
+      <div class="grid">
+
+        <article class="card" style="--c: var(--ren0vate)">
+          <span class="tag">Propriétaires · Architectes · Entrepreneurs</span>
+          <h3>Ren0vate</h3>
+          <p>La plateforme SaaS qui simplifie les primes à la rénovation énergétique en Belgique et suit vos projets de travaux de la première simulation à la réception.</p>
+          <ul>
+            <li>Calculateur de primes Flandre, Bruxelles et Wallonie</li>
+            <li>Suivi de projet par phases et de budget</li>
+            <li>Gestion des documents par type de prime</li>
+            <li>Recherche d'entreprises via la BCE</li>
+            <li>Assistant IA contextuel</li>
+          </ul>
+          <a class="btn" href="#contact">Essayer Ren0vate</a>
+        </article>
+
+        <article class="card" style="--c: var(--carin)">
+          <span class="tag">Architectes · Architectes d'intérieur</span>
+          <h3>Cairn</h3>
+          <p>Le cockpit qui accompagne un architecte de la première esquisse du programme jusqu'à la réception du chantier, en une seule application.</p>
+          <ul>
+            <li>Parcours guidé étape par étape, en Belgique et en Espagne</li>
+            <li>Programme, budget et métré, consultation des entreprises, contrats</li>
+            <li>Suivi de chantier (PWA) et réception</li>
+            <li>Architecture intérieure et livrables centralisés et versionnés</li>
+            <li>Assistant IA, toujours soumis à votre validation</li>
+          </ul>
+          <a class="btn" href="#contact">Découvrir Cairn</a>
+        </article>
+
+        <article class="card" style="--c: var(--urbania)">
+          <span class="tag">Propriétaires · Architectes</span>
+          <h3>urbanIA</h3>
+          <p>L'assistant IA qui aide à comprendre le cadre urbanistique d'un bien avant de se lancer dans un projet de transformation.</p>
+          <ul>
+            <li>Lecture du cadre réglementaire applicable</li>
+            <li>Réponses claires aux questions d'urbanisme</li>
+            <li>Préparation des démarches en amont</li>
+          </ul>
+          <a class="btn" href="#contact">Découvrir urbanIA</a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="bientot">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Bientôt</p>
+        <h2>Du métré à la liste de courses <span class="badge">En développement</span></h2>
+        <p class="lead">Une application en ligne pour les entrepreneurs : vous importez le métré d'un chantier et obtenez automatiquement la liste de matériaux à commander, prête à être envoyée à vos fournisseurs.</p>
+        <div class="cta">
+          <a class="btn ghost" href="#contact">Être prévenu du lancement</a>
+        </div>
+      </div>
+      <div class="flow">Métré (postes, quantités)
+        ↓
+Nomenclature &amp; calcul des besoins
+        ↓
+Liste de courses fournisseur
+        ↓
+Commande &amp; suivi</div>
+    </div>
+  </section>
+
+  <section id="pourquoi" class="soft">
+    <div class="wrap">
+      <p class="eyebrow">Notre approche</p>
+      <h2>Pensé avec le terrain, construit pour durer.</h2>
+      <div class="steps">
+        <div class="step"><strong>Partir des métiers</strong><p>Nos produits naissent des besoins réels des propriétaires, architectes et entrepreneurs.</p></div>
+        <div class="step"><strong>Simplifier les démarches</strong><p>Moins de tableurs, moins de relances, plus de temps sur le chantier et le projet.</p></div>
+        <div class="step"><strong>Données maîtrisées</strong><p>Vos données restent les vôtres. Conformité RGPD prise au sérieux dès la conception.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="societe">
+    <div class="wrap about split">
+      <div>
+        <p class="eyebrow">La société</p>
+        <h2>Architecht</h2>
+        <p>Architecht est une société belge qui développe et édite des logiciels pour le secteur de la construction et de la rénovation.</p>
+        <p>Notre portefeuille regroupe des produits existants et de nouveaux outils en préparation, avec un objectif commun : rendre les projets de bâtiment plus lisibles, mieux chiffrés et mieux suivis.</p>
+      </div>
+      <div class="card" style="--c: var(--brand)">
+        <h3>Nos produits</h3>
+        <ul>
+          <li><strong>Ren0vate</strong> — primes et suivi de rénovation</li>
+          <li><strong>Cairn</strong> — cockpit pour architectes</li>
+          <li><strong>urbanIA</strong> — assistant urbanisme</li>
+          <li><strong>En préparation</strong> — métré vers liste de courses</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="soft contact">
+    <div class="wrap">
+      <p class="eyebrow">Contact</p>
+      <h2>Parlons de votre projet.</h2>
+      <p>Que vous soyez propriétaire, architecte, entrepreneur ou partenaire, écrivez-nous pour une démonstration ou pour être informé des nouveautés.</p>
+      <div class="cta" style="justify-content:center">
+        <a class="btn" href="mailto:contact@architecht.be">contact@architecht.be</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Architecht. Tous droits réservés.</span>
+    <span>Ren0vate · Cairn · urbanIA</span>
+  </div>
+</footer>
+
+</body>
+</html>
