@@ -121,39 +121,13 @@
     }
     .hero-content { position: relative; z-index: 2; max-width: 820px; }
 
-    /* ---------- Scène 3D : plans à plusieurs profondeurs ---------- */
-    .stage { position: absolute; inset: 0; perspective: 1100px; perspective-origin: 60% 40%; pointer-events: none; overflow: hidden; }
-    .scene {
-      position: absolute; inset: -8% -4%;
-      transform-style: preserve-3d;
-      transform:
-        translateZ(calc(var(--dolly, 0) * 1px))
-        rotateX(calc(var(--ry, 0) * 1deg))
-        rotateY(calc(var(--rx, 0) * 1deg));
-      transition: transform .6s cubic-bezier(.2,.7,.2,1);
-      will-change: transform;
+    /* ---------- Scène 3D (Three.js) et plan 2D de secours ---------- */
+    .stage { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    /* Voile sombre à gauche pour que le texte reste lisible sur le dessin */
+    .hero::after {
+      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: linear-gradient(90deg, var(--ink) 30%, color-mix(in srgb, var(--ink) 40%, transparent) 60%, transparent 85%);
     }
-    /* Sol : grille inclinée, en profondeur */
-    .floor {
-      position: absolute; left: 0; right: 0; bottom: 0; height: 75%;
-      transform: rotateX(70deg) translateZ(-160px);
-      background-image:
-        linear-gradient(to right, rgba(94,234,212,.22) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(94,234,212,.22) 1px, transparent 1px);
-      background-size: 70px 70px;
-      -webkit-mask-image: radial-gradient(ellipse at 50% 60%, #000 25%, transparent 70%);
-              mask-image: radial-gradient(ellipse at 50% 60%, #000 25%, transparent 70%);
-    }
-    /* Plan de fond : déjà présent, reculé dans la scène */
-    .scene .blueprint { transform: translateZ(-120px); }
-    /* Élévation au premier plan */
-    .front-plan {
-      position: absolute; right: 6%; top: 16%; width: min(34%, 420px); height: auto;
-      fill: none; stroke: var(--blueprint); stroke-width: 1.6; stroke-linecap: round;
-      opacity: .7; transform: translateZ(180px);
-      filter: drop-shadow(0 0 12px rgba(94,234,212,.35));
-    }
-    .front-plan .draw { stroke-dasharray: var(--len, 1200); stroke-dashoffset: var(--len, 1200); animation: draw 2.4s cubic-bezier(.65,0,.35,1) forwards; animation-delay: calc(var(--d, 0) * 1s); }
     .reveal { opacity: 0; transform: translateY(16px); animation: rise .9s cubic-bezier(.2,.7,.2,1) forwards; }
     .reveal.d1 { animation-delay: 1.6s; }
     .reveal.d2 { animation-delay: 1.8s; }
@@ -161,7 +135,7 @@
     /* Scène WebGL (Three.js) : affichée au-dessus de la scène 2D une fois prête */
     #scene3d { position: absolute; inset: 0; width: 100%; height: 100%; display: none; }
     .hero.is-3d #scene3d { display: block; }
-    .hero.is-3d .scene { display: none; }
+    .hero.is-3d .blueprint { display: none; }
     /* En-tête transparent sur le hero sombre */
     header.top.on-dark { background: transparent; border-bottom-color: transparent; backdrop-filter: none; }
     header.top.on-dark .logo, header.top.on-dark nav a { color: #e2e8f0; }
@@ -280,15 +254,12 @@
       .story-panel { min-height: 0; display: grid; gap: 16px; margin-top: 32px; }
       .panel { position: static; opacity: 1; transform: none; }
       .progress, .steps-list { display: none; }
-      .front-plan, .house { display: none; }
-      .floor { height: 55%; }
     }
 
     /* ---------- Accessibilité : réduire les animations ---------- */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
-      .blueprint .draw, .front-plan .draw { stroke-dashoffset: 0; }
-      .scene { transform: none !important; transition: none !important; }
+      .blueprint .draw { stroke-dashoffset: 0; }
       .blueprint .dim, .reveal { opacity: 1; transform: none; }
       html { scroll-behavior: auto; }
     }
@@ -318,8 +289,6 @@
   <section class="hero">
     <div class="stage" aria-hidden="true">
     <canvas id="scene3d"></canvas>
-    <div class="scene" id="scene">
-    <div class="floor"></div>
     <svg class="blueprint" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
       <!-- Enveloppe du bâtiment -->
       <path class="draw" style="--len:2400;--d:0" d="M120 640 L120 180 L520 180 L520 120 L1000 120 L1000 640 Z"/>
@@ -333,7 +302,6 @@
       <text class="dim" x="560" y="744" style="--d:2">4 200 mm</text>
       <text class="dim" x="1010" y="400" style="--d:2.1">A</text>
     </svg>
-    </div>
     </div>
 
     <div class="wrap hero-content">
@@ -543,32 +511,6 @@
 <script>
   (function () {
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // Scène 3D du hero : la souris fait pivoter, le scroll fait avancer la caméra
-    var hero = document.querySelector('.hero');
-    var scene = document.getElementById('scene');
-    if (scene && !reduced && window.matchMedia('(min-width: 861px)').matches) {
-      var tx = 0, ty = 0, ticking = false;
-      hero.addEventListener('pointermove', function (e) {
-        var r = hero.getBoundingClientRect();
-        tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
-        ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
-        requestUpdate();
-      });
-      function requestUpdate() {
-        if (!ticking) { ticking = true; requestAnimationFrame(render); }
-      }
-      function render() {
-        ticking = false;
-        var rect = hero.getBoundingClientRect();
-        var p = Math.min(Math.max(-rect.top / rect.height, 0), 1);
-        scene.style.setProperty('--rx', (tx * 6).toFixed(2));
-        scene.style.setProperty('--ry', (-ty * 4).toFixed(2));
-        scene.style.setProperty('--dolly', (p * 260).toFixed(1));
-      }
-      window.addEventListener('scroll', requestUpdate, { passive: true });
-      render();
-    }
 
     // Cartes produits : apparition au scroll et lueur qui suit la souris
     var cards = document.querySelectorAll('.card-anim');
