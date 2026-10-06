@@ -5,6 +5,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Architecht — Logiciels pour la rénovation et la construction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
   <meta name="description" content="Architecht conçoit des produits digitaux pour la rénovation : Ren0vate pour les propriétaires, Cairn pour les architectes, urbanIA pour l'urbanisme, et bientôt un outil de métré vers liste de courses.">
   <style>
     :root {
@@ -49,7 +52,7 @@
       margin: 0;
       background: var(--bg);
       color: var(--text);
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       line-height: 1.6;
     }
     a { color: inherit; }
@@ -83,8 +86,15 @@
     .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
     .logo { font-weight: 800; font-size: 1.25rem; text-decoration: none; letter-spacing: -0.02em; }
     .logo span { color: var(--brand); }
-    nav a { margin-left: 22px; text-decoration: none; color: var(--muted); font-size: 0.95rem; }
+    nav a { margin-left: 22px; text-decoration: none; color: var(--muted); font-size: 0.95rem; display: inline-flex; align-items: center; min-height: 44px; }
     nav a:hover { color: var(--text); }
+    .menu-btn {
+      display: none; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 10px;
+      background: transparent; color: var(--text); border: 1px solid var(--line); font: inherit; font-size: 0.95rem; cursor: pointer;
+    }
+    /* Focus visible au clavier, en clair comme dans les sections sombres */
+    :focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+    .hero :focus-visible, .story :focus-visible { outline-color: var(--blueprint); }
 
     /* ---------- Hero « plan qui se dessine » ---------- */
     .hero {
@@ -148,6 +158,15 @@
     .reveal.d1 { animation-delay: 1.6s; }
     .reveal.d2 { animation-delay: 1.8s; }
     .reveal.d3 { animation-delay: 2s; }
+    /* Scène WebGL (Three.js) : affichée au-dessus de la scène 2D une fois prête */
+    #scene3d { position: absolute; inset: 0; width: 100%; height: 100%; display: none; }
+    .hero.is-3d #scene3d { display: block; }
+    .hero.is-3d .scene { display: none; }
+    /* En-tête transparent sur le hero sombre */
+    header.top.on-dark { background: transparent; border-bottom-color: transparent; backdrop-filter: none; }
+    header.top.on-dark .logo, header.top.on-dark nav a { color: #e2e8f0; }
+    header.top.on-dark nav a:hover { color: #fff; }
+    header.top.on-dark .menu-btn { color: #e2e8f0; border-color: #334155; }
     @keyframes draw { to { stroke-dashoffset: 0; } }
     @keyframes fade { to { opacity: 1; } }
     @keyframes rise { to { opacity: 1; transform: none; } }
@@ -195,7 +214,7 @@
     .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; width: 100%; }
     .steps-list { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 10px; }
     .steps-list li {
-      display: flex; gap: 14px; align-items: center; color: #64748b;
+      display: flex; gap: 14px; align-items: center; color: #94a3b8;
       transition: color .4s ease;
     }
     .steps-list li .n {
@@ -245,7 +264,14 @@
 
     /* ---------- Responsive : le récit épinglé devient une liste simple ---------- */
     @media (max-width: 860px) {
-      nav a { display: none; }
+      .menu-btn { display: inline-flex; }
+      nav {
+        display: none; position: absolute; top: 64px; left: 0; right: 0;
+        background: var(--bg); border-bottom: 1px solid var(--line); padding: 8px 20px 16px;
+      }
+      nav.open { display: grid; }
+      header.top.on-dark nav { background: #0b1220; }
+      nav a { margin: 0; }
       .split, .story-grid, .demo { grid-template-columns: 1fr; }
       .demo .arrow { transform: rotate(90deg); justify-self: center; }
       section { padding: 64px 0; }
@@ -254,7 +280,7 @@
       .story-panel { min-height: 0; display: grid; gap: 16px; margin-top: 32px; }
       .panel { position: static; opacity: 1; transform: none; }
       .progress, .steps-list { display: none; }
-      .front-plan { display: none; }
+      .front-plan, .house { display: none; }
       .floor { height: 55%; }
     }
 
@@ -267,13 +293,16 @@
       html { scroll-behavior: auto; }
     }
   </style>
+  <!-- Motion (successeur vanilla de Framer Motion, sans React) : expose window.Motion -->
+  <script defer src="https://cdn.jsdelivr.net/npm/motion@12.43.0/dist/motion.js"></script>
 </head>
 <body>
 
 <header class="top">
   <div class="wrap">
     <a class="logo" href="#top">Architech<span>t</span></a>
-    <nav>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav-main">Menu</button>
+    <nav id="nav-main" aria-label="Principal">
       <a href="#produits">Produits</a>
       <a href="#parcours">Parcours</a>
       <a href="#bientot">Bientôt</a>
@@ -288,6 +317,7 @@
   <!-- Hero : plan architectural qui se dessine -->
   <section class="hero">
     <div class="stage" aria-hidden="true">
+    <canvas id="scene3d"></canvas>
     <div class="scene" id="scene">
     <div class="floor"></div>
     <svg class="blueprint" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
@@ -302,10 +332,6 @@
       <text class="dim" x="130" y="710" style="--d:1.8">12 550 mm</text>
       <text class="dim" x="560" y="744" style="--d:2">4 200 mm</text>
       <text class="dim" x="1010" y="400" style="--d:2.1">A</text>
-    </svg>
-    <svg class="front-plan" viewBox="0 0 400 400" aria-hidden="true">
-      <!-- Élévation au premier plan, plus proche de la caméra -->
-      <path class="draw" style="--len:1200;--d:.6" d="M20 380 L20 160 L120 90 L220 160 L220 380 M220 220 L340 220 L340 380 M60 380 L60 260 L110 260 L110 380 M260 280 L300 280 L300 320 L260 320 Z"/>
     </svg>
     </div>
     </div>
@@ -546,12 +572,23 @@
 
     // Cartes produits : apparition au scroll et lueur qui suit la souris
     var cards = document.querySelectorAll('.card-anim');
+    // Motion (chargé en defer) anime l'entrée ; sans lui, la transition CSS prend le relais
+    function revealCard(el) {
+      if (!window.Motion) { el.classList.add('in'); return; }
+      var delay = parseFloat(el.style.getPropertyValue('--delay')) || 0;
+      Motion.animate(el, { opacity: [0, 1], y: [32, 0] }, { duration: 0.8, delay: delay, ease: [0.2, 0.7, 0.2, 1] })
+        .then(function () {
+          el.classList.add('in');
+          el.style.transform = '';
+          el.style.opacity = '';
+        });
+    }
     if (reduced || !('IntersectionObserver' in window)) {
       cards.forEach(function (c) { c.classList.add('in'); });
     } else {
       var cardIo = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
-          if (e.isIntersecting) { e.target.classList.add('in'); cardIo.unobserve(e.target); }
+          if (e.isIntersecting) { revealCard(e.target); cardIo.unobserve(e.target); }
         });
       }, { threshold: 0.2 });
       cards.forEach(function (c) { cardIo.observe(c); });
@@ -610,6 +647,217 @@
       items.forEach(function (li) { li.classList.remove('pending'); });
     }
     document.getElementById('replay').addEventListener('click', playDemo);
+
+    // Menu mobile : bouton accessible, fermé après un clic sur un lien ou avec Échap
+    var menuBtn = document.getElementById('menu-btn');
+    var nav = document.getElementById('nav-main');
+    function setMenu(open) {
+      nav.classList.toggle('open', open);
+      menuBtn.setAttribute('aria-expanded', String(open));
+      menuBtn.textContent = open ? 'Fermer' : 'Menu';
+    }
+    menuBtn.addEventListener('click', function () { setMenu(!nav.classList.contains('open')); });
+    nav.addEventListener('click', function (e) { if (e.target.tagName === 'A') setMenu(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && nav.classList.contains('open')) { setMenu(false); menuBtn.focus(); }
+    });
+  })();
+</script>
+
+<script type="module">
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+  (function () {
+    var hero = document.querySelector('.hero');
+    var header = document.querySelector('header.top');
+    var canvas = document.getElementById('scene3d');
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var wide = window.matchMedia('(min-width: 861px)').matches;
+
+    // En-tête transparent tant que le hero sombre est visible
+    function syncHeader() {
+      header.classList.toggle('on-dark', hero.getBoundingClientRect().bottom > 64);
+    }
+    window.addEventListener('scroll', syncHeader, { passive: true });
+    syncHeader();
+
+    // Sur mobile ou sans WebGL, la scène 2D reste affichée
+    if (!wide || !canvas) return;
+    var renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    } catch (err) {
+      return;
+    }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);
+
+    var TEAL = 0x5eead4;
+    var H = 3.2;       // hauteur des murs
+    var T = 0.3;       // épaisseur des murs
+
+    var scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x0b1220, 24, 48);
+    var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+
+    // Grille de sol, qui s'estompe avec la distance
+    var grid = new THREE.GridHelper(60, 60, TEAL, 0x1e3a3a);
+    grid.material.transparent = true;
+    grid.material.opacity = 0.35;
+    scene.add(grid);
+
+    var house = new THREE.Group();
+    scene.add(house);
+
+    // Plan au sol : segments tracés un à un
+    var plan = [
+      [-6, -4, 6, -4], [6, -4, 6, 4], [6, 4, -6, 4], [-6, 4, -6, -4],   // enveloppe
+      [-1.5, -4, -1.5, 1], [-6, 0.5, -1.5, 0.5], [1.5, -1, 1.5, 4], [1.5, -1, 6, -1]  // cloisons
+    ];
+    var planPts = [];
+    plan.forEach(function (s) { planPts.push(s[0], 0.02, s[1], s[2], 0.02, s[3]); });
+    var planGeo = new THREE.BufferGeometry();
+    planGeo.setAttribute('position', new THREE.Float32BufferAttribute(planPts, 3));
+    var planLines = new THREE.LineSegments(planGeo, new THREE.LineBasicMaterial({ color: TEAL, transparent: true, opacity: 0.95 }));
+    house.add(planLines);
+    var planVertices = planPts.length / 3;
+
+    // Emprise au sol, très légère
+    var floorPlate = new THREE.Mesh(
+      new THREE.PlaneGeometry(12, 8).rotateX(-Math.PI / 2),
+      new THREE.MeshBasicMaterial({ color: TEAL, transparent: true, opacity: 0.05, depthWrite: false })
+    );
+    floorPlate.position.y = 0.005;
+    house.add(floorPlate);
+
+    // Murs : chacun monte depuis le plan, avec décalage
+    var walls = plan.map(function (s, i) {
+      var dx = s[2] - s[0], dz = s[3] - s[1];
+      var len = Math.hypot(dx, dz);
+      var geo = new THREE.BoxGeometry(len, H, T);
+      geo.translate(0, H / 2, 0);
+      var fill = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: TEAL, transparent: true, opacity: 0.12, depthWrite: false }));
+      var edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: TEAL, transparent: true, opacity: 0.85 }));
+      var group = new THREE.Group();
+      group.add(fill, edges);
+      group.position.set((s[0] + s[2]) / 2, 0, (s[1] + s[3]) / 2);
+      group.rotation.y = -Math.atan2(dz, dx);
+      group.scale.y = 0;
+      house.add(group);
+      return { group: group, fill: fill, edges: edges, start: 1.4 + i * 0.3 };
+    });
+
+    // Dalle de toiture, qui descend sur les murs
+    var roofGeo = new THREE.BoxGeometry(12.6, 0.25, 8.6);
+    var roofMat = new THREE.MeshBasicMaterial({ color: TEAL, transparent: true, opacity: 0, depthWrite: false });
+    var roof = new THREE.Mesh(roofGeo, roofMat);
+    var roofEdges = new THREE.LineSegments(new THREE.EdgesGeometry(roofGeo), new THREE.LineBasicMaterial({ color: TEAL, transparent: true, opacity: 0 }));
+    var roofGroup = new THREE.Group();
+    roofGroup.add(roof, roofEdges);
+    roofGroup.position.y = H + 0.12;
+    house.add(roofGroup);
+    var roofStart = walls[walls.length - 1].start + 0.6;
+
+    // Cote de longueur, avec son libellé
+    var dimPts = [-6, 0.02, 5.2, 6, 0.02, 5.2, -6, 0.02, 5.0, -6, 0.02, 5.4, 6, 0.02, 5.0, 6, 0.02, 5.4];
+    var dimGeo = new THREE.BufferGeometry();
+    dimGeo.setAttribute('position', new THREE.Float32BufferAttribute(dimPts, 3));
+    var dimLines = new THREE.LineSegments(dimGeo, new THREE.LineBasicMaterial({ color: TEAL, transparent: true, opacity: 0 }));
+    house.add(dimLines);
+
+    var labelCanvas = document.createElement('canvas');
+    labelCanvas.width = 512; labelCanvas.height = 128;
+    var lg = labelCanvas.getContext('2d');
+    lg.font = '48px ui-monospace, Menlo, Consolas, monospace';
+    lg.fillStyle = '#94a3b8';
+    lg.textAlign = 'center';
+    lg.textBaseline = 'middle';
+    lg.fillText('12 000 mm', 256, 64);
+    var label = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(labelCanvas), transparent: true, opacity: 0, depthWrite: false }));
+    label.scale.set(3.2, 0.8, 1);
+    label.position.set(0, 0.6, 5.8);
+    house.add(label);
+    var dimStart = roofStart + 0.6;
+
+    function ease(x) { return x <= 0 ? 0 : x >= 1 ? 1 : 1 - Math.pow(1 - x, 3); }
+    function step(t, start, dur) { return ease((t - start) / dur); }
+
+    // État de la construction au temps t (secondes)
+    function build(t) {
+      var p = step(t, 0, 1.4);
+      planGeo.setDrawRange(0, Math.round(p * planVertices / 2) * 2);
+      walls.forEach(function (w) {
+        var q = step(t, w.start, 0.9);
+        w.group.scale.y = q;
+        w.fill.material.opacity = 0.12 * q;
+        w.edges.material.opacity = 0.85 * (q > 0 ? 1 : 0);
+      });
+      var r = step(t, roofStart, 1.0);
+      roofGroup.position.y = H + 0.12 + (1 - r) * 2.5;
+      roofMat.opacity = 0.35 * r;
+      roofEdges.material.opacity = 0.85 * r;
+      var d = step(t, dimStart, 0.8);
+      dimLines.material.opacity = 0.8 * d;
+      label.material.opacity = d;
+    }
+
+    var pointer = { x: 0, y: 0 }, smooth = { x: 0, y: 0 };
+    var scrollP = 0;
+    var T0 = performance.now();
+    var looping = false, visible = true;
+
+    function resize() {
+      var w = canvas.clientWidth, h = canvas.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+
+    function render(now) {
+      var t = reduced ? 100 : (now - T0) / 1000;
+      build(t);
+      smooth.x += (pointer.x - smooth.x) * 0.05;
+      smooth.y += (pointer.y - smooth.y) * 0.05;
+      var angle = reduced ? 0.5 : t * 0.07 + smooth.x * 0.35;
+      var r = 26 - scrollP * 5;
+      camera.position.set(Math.sin(angle) * r, 9 + smooth.y * 1.5 + scrollP * 2, Math.cos(angle) * r);
+      // Le bâtiment est cadré à droite, à côté du texte
+      camera.lookAt(-3.6, 1.4, 0);
+      renderer.render(scene, camera);
+      hero.classList.add('is-3d');
+      if (!reduced && visible && !looping) loop();
+    }
+
+    function loop() {
+      looping = true;
+      requestAnimationFrame(function frame(now) {
+        if (!visible) { looping = false; return; }
+        render(now);
+        if (looping) requestAnimationFrame(frame);
+      });
+    }
+
+    hero.addEventListener('pointermove', function (e) {
+      pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = (e.clientY / window.innerHeight) * 2 - 1;
+    });
+    window.addEventListener('scroll', function () {
+      var rect = hero.getBoundingClientRect();
+      scrollP = Math.min(Math.max(-rect.top / rect.height, 0), 1);
+    }, { passive: true });
+
+    // Pause hors écran pour économiser le processeur
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+        if (visible && !reduced) loop();
+      }).observe(hero);
+    }
+
+    if (window.ResizeObserver) new ResizeObserver(function () { resize(); render(performance.now()); }).observe(canvas);
+    resize();
+    render(performance.now());
   })();
 </script>
 
